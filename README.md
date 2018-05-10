@@ -1,4 +1,4 @@
-# bind9 named-chroot CentOS 7 SELinux and Local Firewall enabled
+# BIND9 CentOS 7 named-chroot with SELinux and Local Firewalld enabled
 
 ## What is this:
 UserData script for Centos 7 Chroot Bind DNS Server
