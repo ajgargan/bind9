@@ -5,6 +5,7 @@ UserData script for Centos 7 Chroot Bind DNS Server
 * SELinux enabled
 * BIND Running in chroot
 * Firewalld running on instance
+* Single forward only zone example 
 
 ## Using this:
 * Launch Above AMI in eu-west Region
