@@ -13,37 +13,6 @@ UserData script for Centos 7 Chroot Bind DNS Server
 * Configure an SSH Keypair you have access to.
 * Paste the UserData below into the instance UserData under advanced
 
-## Testing 
-* From an Internet connected host
-  * dig @<public_ip> wiki.dnsdemo.osite.co.za
-  * dig @<public_ip> ns1.dnsdemo.osite.co.za
-
-## Next Steps 
-### Create CFN Template with
-* EC2 Instance ns0 as master which does not accept resolves
-* EC2 Instance ns1 as slave which resolves AZ1
-* EC2 Instance ns2 as slave which resolves AZ2
-* 1 EIP for each instance
-* UserData which injects the EIP's into the BIND configs
-* CFN-Hup for managing changes to the ZoneFile on ns0
-* EC2 Instance Bastion host
-* SG for Name Servers 
-  * Allow zone transfers and lookups to ns0/1/2
-  * Allow SSH From Bastion SG
-* SG for Bastion
-  * Allow SSH from CIDR provided
-
-### User data
-* Perform some Kernel Tuning /etc/sysctl.d/99_hardening.conf
-  * No Packet forwarding
-  
-* Lock down sshd
-  * No Remote Root
-  * Public Key Only
-  * Alternative SSH Port
-
-* Lock down root shell /bin/nologin && /etc/securetty 
-
 ## Single Host UserData script
 ```bash
 #!/bin/sh
@@ -145,3 +114,35 @@ firewall-cmd --reload
 sed -i 's/permissive/enforcing/g' /etc/selinux/config
 setenforce 1
 ```
+
+## Testing 
+* From an Internet connected host
+  * dig @<public_ip> wiki.dnsdemo.osite.co.za
+  * dig @<public_ip> ns1.dnsdemo.osite.co.za
+
+## Next Steps 
+### Create CFN Template with
+* EC2 Instance ns0 as master which does not accept resolves
+* EC2 Instance ns1 as slave which resolves AZ1
+* EC2 Instance ns2 as slave which resolves AZ2
+* 1 EIP for each instance
+* UserData which injects the EIP's into the BIND configs
+* CFN-Hup for managing changes to the ZoneFile on ns0
+* EC2 Instance Bastion host
+* SG for Name Servers 
+  * Allow zone transfers and lookups to ns0/1/2
+  * Allow SSH From Bastion SG
+* SG for Bastion
+  * Allow SSH from CIDR provided
+
+### User data
+* Perform some Kernel Tuning /etc/sysctl.d/99_hardening.conf
+  * No Packet forwarding
+  
+* Lock down sshd
+  * No Remote Root
+  * Public Key Only
+  * Alternative SSH Port
+
+* Lock down root shell /bin/nologin && /etc/securetty 
+
