@@ -1,12 +1,15 @@
-# bind9
+# bind9 named-chroot CentOS 7 SELinux and Local Firewall enabled
+
+## What is this
 UserData script for Centos 7 Chroot Bind DNS Server
 
-```bash
+tested on 
+dcos-centos7-201710261514 - ami-0075d079
+in AWS eu-west-1
+
+```shell
 #!/bin/sh -x
 
-# Based on:
-# dcos-centos7-201710261514 - ami-0075d079
-# in eu-west-1
 
 # Ensure SELinux is off so we can install and configure things
 # We will enable it when we are done
