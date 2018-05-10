@@ -137,12 +137,14 @@ setenforce 1
 
 ### User data
 * Perform some Kernel Tuning /etc/sysctl.d/99_hardening.conf
-  * No Packet forwarding
-  
+  * Disable Packet forwarding
+
+* Limits Tuning
+  * Disable Core Dumps
+
 * Lock down sshd
   * No Remote Root
   * Public Key Only
   * Alternative SSH Port
 
 * Lock down root shell /bin/nologin && /etc/securetty 
-
