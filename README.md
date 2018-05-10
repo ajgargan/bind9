@@ -7,9 +7,9 @@ tested on
 dcos-centos7-201710261514 - ami-0075d079
 in AWS eu-west-1
 
-```shell
-#!/bin/sh -x
-
+## UserData script
+```bash
+#!/bin/sh
 
 # Ensure SELinux is off so we can install and configure things
 # We will enable it when we are done
