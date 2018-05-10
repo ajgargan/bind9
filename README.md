@@ -19,14 +19,31 @@ UserData script for Centos 7 Chroot Bind DNS Server
   * dig @<public_ip> ns1.dnsdemo.osite.co.za
 
 ### Next Steps 
-* Create CFN Template with
-  * EC2 Instance ns0 as master which does not accept resolves
-  * EC2 Instance ns1 as slave which resolves AZ1
-  * EC2 Instance ns2 as slave which resolves AZ2
-  * 1 EIP for each instance
-  * UserData which injects the EIP's into the BIND configs
-  * CFN-Hup for managing changes to the ZoneFile on ns0
+#### Create CFN Template with
+* EC2 Instance ns0 as master which does not accept resolves
+* EC2 Instance ns1 as slave which resolves AZ1
+* EC2 Instance ns2 as slave which resolves AZ2
+* 1 EIP for each instance
+* UserData which injects the EIP's into the BIND configs
+* CFN-Hup for managing changes to the ZoneFile on ns0
+* EC2 Instance Bastion host
+* SG for Name Servers 
+  * Allow zone transfers and lookups to ns0/1/2
+  * Allow SSH From Bastion SG
+* SG for Bastion
+  * Allow SSH from CIDR provided
+
+#### User data
+* Perform some Kernel Tuning /etc/sysctl.d/99_hardening.conf
+  * No Packet forwarding
   
+* Lock down sshd
+  * No Remote Root
+  * Public Key Only
+  * Alternative SSH Port
+
+* Lock down root shell /bin/nologin && /etc/securetty 
+
 ### UserData script
 ```bash
 #!/bin/sh
@@ -111,7 +128,7 @@ chmod 640 /var/named/dnsdemo.osite.co.za
 semanage fcontext -a -t named_zone_t /etc/named.conf
 semanage fcontext -a -t named_zone_t /var/named/dnsdemo.osite.co.za
 
-# setup the chroot jail. The above configs will be merged into the jail
+# setup the named-chroot. The above configs will be merged into the chroot
 /usr/lib/exec/setup-named-chroot.sh /var/named/chroot on
 
 # turn on and persist the named-chroot service
