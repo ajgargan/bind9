@@ -6,20 +6,20 @@ UserData script for Centos 7 Chroot Bind DNS Server
 * BIND Running in chroot
 * Firewalld running on instance
 
-### Using this:
+## Using this:
 * Launch Above AMI in eu-west Region
 * Launch into a Public Subnet
 * Enable UDP and TCP 53(DNS) in the Security group and TCP 22(SSH) 
 * Configure an SSH Keypair you have access to.
 * Paste the UserData below into the instance UserData under advanced
 
-### Testing 
+## Testing 
 * From an Internet connected host
   * dig @<public_ip> wiki.dnsdemo.osite.co.za
   * dig @<public_ip> ns1.dnsdemo.osite.co.za
 
-### Next Steps 
-#### Create CFN Template with
+## Next Steps 
+### Create CFN Template with
 * EC2 Instance ns0 as master which does not accept resolves
 * EC2 Instance ns1 as slave which resolves AZ1
 * EC2 Instance ns2 as slave which resolves AZ2
@@ -33,7 +33,7 @@ UserData script for Centos 7 Chroot Bind DNS Server
 * SG for Bastion
   * Allow SSH from CIDR provided
 
-#### User data
+### User data
 * Perform some Kernel Tuning /etc/sysctl.d/99_hardening.conf
   * No Packet forwarding
   
@@ -44,7 +44,7 @@ UserData script for Centos 7 Chroot Bind DNS Server
 
 * Lock down root shell /bin/nologin && /etc/securetty 
 
-### UserData script
+## Single Host UserData script
 ```bash
 #!/bin/sh
 
