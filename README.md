@@ -1,13 +1,33 @@
 # bind9 named-chroot CentOS 7 SELinux and Local Firewall enabled
 
-## What is this
+## What is this:
 UserData script for Centos 7 Chroot Bind DNS Server
+* SELinux enabled
+* BIND Running in chroot
+* Firewalld running on instance
 
-tested on 
-dcos-centos7-201710261514 - ami-0075d079
-in AWS eu-west-1
+### Using this:
+* Launch Above AMI in eu-west Region
+* Launch into a Public Subnet
+* Enable UDP and TCP 53(DNS) in the Security group and TCP 22(SSH) 
+* Configure an SSH Keypair you have access to.
+* Paste the UserData below into the instance UserData under advanced
 
-## UserData script
+### Testing 
+* From an Internet connected host
+  * dig @<public_ip> wiki.dnsdemo.osite.co.za
+  * dig @<public_ip> ns1.dnsdemo.osite.co.za
+
+### Next Steps 
+* Create CFN Template with
+  * EC2 Instance ns0 as master which does not accept resolves
+  * EC2 Instance ns1 as slave which resolves AZ1
+  * EC2 Instance ns2 as slave which resolves AZ2
+  * 1 EIP for each instance
+  * UserData which injects the EIP's into the BIND configs
+  * CFN-Hup for managing changes to the ZoneFile on ns0
+  
+### UserData script
 ```bash
 #!/bin/sh
 
