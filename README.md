@@ -228,3 +228,7 @@ Being ready for when it is is not a bad thing.
   * usermod -s /sbin/login root
 
 * Possibly look at fail2ban etc. and also TCP Connection rate limiting via Firewalld/IPTABLES but realistically SSH **shouldn't** be accessible directly from outside the network.
+
+* Enable Auditing 
+* Enable remote syslogging
+* Enable host monitoring
