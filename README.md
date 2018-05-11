@@ -157,7 +157,7 @@ Being ready for when it is is not a bad thing.
 * Test with
   * dig +dnssec @8.8.8.8 some.domain.com
   eg:
-  '''
+  ```
     # dig +dnssec @8.8.8.8 www.cloudflare.com
 
     ; <<>> DiG 9.9.4-RedHat-9.9.4-61.el7 <<>> +dnssec @8.8.8.8 www.cloudflare.com
@@ -181,7 +181,7 @@ Being ready for when it is is not a bad thing.
     ;; SERVER: 8.8.8.8#53(8.8.8.8)
     ;; WHEN: Fri May 11 06:14:29 UTC 2018
     ;; MSG SIZE  rcvd: 189
-  '''
+  ```
   * [https://dnssec-analyzer.verisignlabs.com/]
 
 ### User data
