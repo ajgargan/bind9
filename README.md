@@ -156,6 +156,32 @@ Being ready for when it is is not a bad thing.
 * sign zonefiles with DNSKEY to create RRSIG records
 * Test with
   * dig +dnssec @8.8.8.8 some.domain.com
+  eg:
+  '''
+    # dig +dnssec @8.8.8.8 www.cloudflare.com
+
+    ; <<>> DiG 9.9.4-RedHat-9.9.4-61.el7 <<>> +dnssec @8.8.8.8 www.cloudflare.com
+    ; (1 server found)
+    ;; global options: +cmd
+    ;; Got answer:
+    ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 51511
+    ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 3, AUTHORITY: 0, ADDITIONAL: 1
+
+    ;; OPT PSEUDOSECTION:
+    ; EDNS: version: 0, flags: do; udp: 512
+    ;; QUESTION SECTION:
+    ;www.cloudflare.com.		IN	A
+
+    ;; ANSWER SECTION:
+    www.cloudflare.com.	4	IN	A	198.41.215.162
+    www.cloudflare.com.	4	IN	A	198.41.214.162
+    www.cloudflare.com.	4	IN	RRSIG	A 13 3 5 20180512071419 20180510051419 35273 cloudflare.com. oJ4UB0kPYK0ckwfRndLdT/1up9pb9kFIFDYPe5fPPffcK9h4NyAw1PBy EWzS3TqVUaSAJbdvJezLC5X0gz/3Ig==
+
+    ;; Query time: 25 msec
+    ;; SERVER: 8.8.8.8#53(8.8.8.8)
+    ;; WHEN: Fri May 11 06:14:29 UTC 2018
+    ;; MSG SIZE  rcvd: 189
+  '''
   * [https://dnssec-analyzer.verisignlabs.com/]
 
 ### User data
