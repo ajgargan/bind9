@@ -151,10 +151,11 @@ reboot
 ### Add DNSSEC zone signing
 DNSSEC is not currently supported by all TLD and Registrars, notably for co.za.
 Being ready for when it is is not a bad thing.
-* setup keys
-* setup DNSKEY Record
-* sign zonefiles with DNSKEY to create RRSIG records
-* Test with
+* setup Key Signing Keys and Zone Signing Key
+* add both Keys to bottom of zonefile($INCLUDE <Keynamehere>)
+* sign zonefiles with Zone Signing Key
+* configure DS Records with registrar
+* Test with:
   * dig +dnssec @8.8.8.8 some.domain.com
   eg:
   ```
@@ -182,7 +183,7 @@ Being ready for when it is is not a bad thing.
     ;; WHEN: Fri May 11 06:14:29 UTC 2018
     ;; MSG SIZE  rcvd: 189
   ```
-  * [versignlabs](https://dnssec-analyzer.verisignlabs.com/)
+  * [versignlabs dnssec tool](https://dnssec-analyzer.verisignlabs.com/)
 
 ### User data
 * Perform some Kernel Tuning /etc/sysctl.d/99_hardening.conf
