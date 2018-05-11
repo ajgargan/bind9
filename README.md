@@ -209,9 +209,18 @@ Being ready for when it is is not a bad thing.
 * Limits Tuning
   * Restrict Core Dumps
     * Add "*    hard   core    0" to /etc/limits.d/99_core_hardening.conf
-* Lock down sshd
+* Lock down /etc/ssh/sshd_config
+  * Force V2
+    - Protocol 2
   * No Remote Root
+    - PermitRootLogin No
   * PublicKey authentication Only
+    - PubkeyAuthentication yes
+    - PasswordAuthentication no
+  * Force Use of PAM
+    - UsePAM yes
   * Alternative SSH Port (Remember to modify SG's)
-
+    - Port 99
 * Lock down root shell /bin/nologin && /etc/securetty 
+  * echo > /etc/securetty
+  * usermod -s /sbin/login root
