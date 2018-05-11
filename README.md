@@ -28,9 +28,17 @@ hostnamectl set-hostname ns1.dnsdemo.osite.co.za
 # install the chrooted bind package
 yum install -y bind-chroot firewalld 
 
-# tun off the normal non chroot named
+# turn off the non chroot named
 systemsctl stop named
 systemctl disable named
+
+# turn off and disable docker
+systemsctl stop docker
+systemctl disable docker
+
+# turn off and disable postfix
+systemctl stop postfix
+systemctl disable postfix
 
 # create zone files and config
 cat <<EOF >/etc/named.conf
@@ -114,6 +122,9 @@ firewall-cmd --reload
 # Ensure that SELinux is enabled
 sed -i 's/permissive/enforcing/g' /etc/selinux/config
 setenforce 1
+
+# restart server
+reboot
 ```
 
 ## Testing 
@@ -136,19 +147,28 @@ setenforce 1
 * SG for Bastion
   * Allow SSH from CIDR provided
 
+### Add DNSSEC zone signing
+DNSSEC is not currently supported by all TLD and Registrars, notably for co.za.
+Being ready for when it is is not a bad thing.
+* setup keys
+* setup DNSKEY Record
+* sign zonefiles with DNSKEY to create RRSIG records
+* Test with
+  * dig +dnssec @8.8.8.8 some.domain.com
+
 ### User data
 * Perform some Kernel Tuning /etc/sysctl.d/99_hardening.conf
   * Network Level
     * Disable the IP Forwarding
-      net.ipv4.ip_forward=0
+      * net.ipv4.ip_forward=0
     * Disable the Send Packet Redirects
-      net.ipv4.conf.all.send_redirects=0
-      net.ipv4.conf.default.send_redirects=0
+      * net.ipv4.conf.all.send_redirects=0
+      * net.ipv4.conf.default.send_redirects=0
     * Disable ICMP Redirect Acceptance
-      net.ipv4.conf.all.accept_redirects=0
-      net.ipv4.conf.default.accept_redirects=0
+      * net.ipv4.conf.all.accept_redirects=0
+      * net.ipv4.conf.default.accept_redirects=0
     * Enable Bad Error Message Protection
-      net.ipv4.icmp_ignore_bogus_error_responses=1
+      * net.ipv4.icmp_ignore_bogus_error_responses=1
   * Other 
     * Restricting Core Dumps 
       * fs.suid_dumpable=0
@@ -159,7 +179,7 @@ setenforce 1
 
 * Limits Tuning
   * Restrict Core Dumps
-
+    * Add "*    hard   core    0" to /etc/limits.d/99_core_hardening.conf
 * Lock down sshd
   * No Remote Root
   * PublicKey authentication Only
