@@ -209,6 +209,7 @@ Being ready for when it is is not a bad thing.
 * Limits Tuning
   * Restrict Core Dumps
     * Add "*    hard   core    0" to /etc/limits.d/99_core_hardening.conf
+
 * Lock down /etc/ssh/sshd_config
   * Force V2
     - Protocol 2
@@ -221,6 +222,9 @@ Being ready for when it is is not a bad thing.
     - UsePAM yes
   * Alternative SSH Port (Remember to modify SG's)
     - Port 99
+    
 * Lock down root shell /bin/nologin && /etc/securetty 
   * echo > /etc/securetty
   * usermod -s /sbin/login root
+
+* Possibly look at fail2ban etc. and also TCP Connection rate limiting via Firewalld/IPTABLES but realistically SSH won't be accessible directly from outside the network.
