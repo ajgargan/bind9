@@ -182,7 +182,7 @@ Being ready for when it is is not a bad thing.
     ;; WHEN: Fri May 11 06:14:29 UTC 2018
     ;; MSG SIZE  rcvd: 189
   ```
-  * [https://dnssec-analyzer.verisignlabs.com/]
+  * [versignlabs](https://dnssec-analyzer.verisignlabs.com/)
 
 ### User data
 * Perform some Kernel Tuning /etc/sysctl.d/99_hardening.conf
