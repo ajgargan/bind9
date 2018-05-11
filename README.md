@@ -16,7 +16,8 @@ UserData script for Centos 7 Chroot Bind DNS Server
 
 ## Single Host UserData script
 ```bash
-#!/bin/sh
+#!/bin/sh -x
+# -x so we can see whats going on from the console output and logs
 
 # Ensure SELinux is off so we can install and configure things
 # We will enable it when we are done
