@@ -242,6 +242,12 @@ EOF
     - UsePAM yes
   * Alternative SSH Port (Remember to modify SG's)
     - Port 99
+
+* Use an isolated block device for the chroot
+  * Set the following fsoptions
+    * noexec – Do not set execution of any binaries on this partition (prevents execution of binaries but allows scripts).
+    * nodev – Do not allow character or special devices on this partition (prevents use of device files such as zero, sda etc).
+    * nosuid – Do not set SUID/SGID access on this partition (prevent the setuid bit).
     
 * Lock down root shell /bin/nologin && /etc/securetty 
   * echo > /etc/securetty
@@ -252,3 +258,9 @@ EOF
 * Enable Auditing 
 * Enable remote syslogging
 * Enable host monitoring
+
+## References:
+
+* https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/sec-security_threats
+* https://www.cyberciti.biz/tips/linux-security.html
+* https://www.digitalocean.com/community/tutorials/how-to-setup-dnssec-on-an-authoritative-bind-dns-server--2
