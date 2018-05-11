@@ -156,6 +156,7 @@ Being ready for when it is is not a bad thing.
 * sign zonefiles with DNSKEY to create RRSIG records
 * Test with
   * dig +dnssec @8.8.8.8 some.domain.com
+  * [https://dnssec-analyzer.verisignlabs.com/]
 
 ### User data
 * Perform some Kernel Tuning /etc/sysctl.d/99_hardening.conf
