@@ -209,7 +209,27 @@ Being ready for when it is is not a bad thing.
 * Limits Tuning
   * Restrict Core Dumps
     * Add "*    hard   core    0" to /etc/limits.d/99_core_hardening.conf
+```
+cat <<EOF >/etc/sysctl.d/hardening.conf
+#Disable the IP Forwarding
+net.ipv4.ip_forward=0
+#Disable the Send Packet Redirects
+net.ipv4.conf.all.send_redirects=0
+net.ipv4.conf.default.send_redirects=0
+#Disable ICMP Redirect Acceptance
+net.ipv4.conf.all.accept_redirects=0
+net.ipv4.conf.default.accept_redirects=0
+#Enable Bad Error Message Protection
+net.ipv4.icmp_ignore_bogus_error_responses=1
 
+#Restricting Core Dumps
+fs.suid_dumpable=0
+#Enable Exec Shield
+kernel.exec-shield=1
+#Enable randomized Virtual Memory Region Placement
+kernel.randomize_va_space=2
+EOF
+```
 * Lock down /etc/ssh/sshd_config
   * Force V2
     - Protocol 2
