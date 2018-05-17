@@ -79,7 +79,7 @@ zone "." IN {
 
 zone "dnsdemo.osite.co.za" {
     type master;
-    file "dnsdemo.osite.co.za";
+    file "dnsdemo.osite.co.za.signed";
     allow-update{none;};
 };
 
@@ -105,9 +105,36 @@ EOF
 chown root.named /var/named/dnsdemo.osite.co.za
 chmod 640 /var/named/dnsdemo.osite.co.za
 
-# Set SELinux Contexts
-semanage fcontext -a -t named_zone_t /etc/named.conf
-semanage fcontext -a -t named_zone_t /var/named/dnsdemo.osite.co.za
+# Install package to make better entropy for cloud server entropy
+yum install -y epel-release 
+yum install haveged
+
+# create DNSSEC signing keys
+# Key Signing Key
+dnssec-keygen -a NSEC3RSASHA1 -b 2048 -n ZONE dnsdemo.osite.co.za
+# Zone Signing Key
+dnssec-keygen -f KSK -a NSEC3RSASHA1 -b 4096 -n ZONE dnsdemo.osite.co.za
+
+# Ensure private key perms
+chown root:root /var/named/Kdnsdemo.osite.co.za.*private
+chmod 600 /var/named/Kdnsdemo.osite.co.za.*private
+
+# Find key file names to add to zone
+KEY1=$(basename $(ls /var/named/Kdnsdemo.osite.co.za.*key | head -n1))
+KEY1=$(basename $(ls /var/named/Kdnsdemo.osite.co.za.*key | tail -n1))
+
+# Add keys to zone file
+cat <<EOF >>/var/named/dnsdemo.osite.co.za
+\$INCLUDE $KEY1
+\$INCLUDE $KEY2
+EOF
+
+# sign zone (creates /var/named/dnsdemo.osite.co.za.signed)
+dnssec-signzone -A -3 $(head -c 1000 /dev/random | sha1sum | cut -b 1-16) -N INCREMENT -o dnsdemo.osite.co.za -t dnsdemo.osite.co.za
+
+# Set SELinux Contexts (not reallly required
+# semanage fcontext -a -t named_zone_t /etc/named.conf
+# semanage fcontext -a -t named_zone_t /var/named/dnsdemo.osite.co.za
 
 # setup the named-chroot. The above configs will be merged into the chroot
 /usr/lib/exec/setup-named-chroot.sh /var/named/chroot on
@@ -116,7 +143,7 @@ semanage fcontext -a -t named_zone_t /var/named/dnsdemo.osite.co.za
 systemctl enable named-chroot
 systemctl start named-chroot
 
-# Set firewalling
+# Set firewalling to allow DNS access
 systemctl enable firewalld 
 systemctl start firewalld
 firewall-cmd --permanent --zone=public --add-service dns
@@ -150,16 +177,18 @@ EOF
 
 # Ensure that SELinux is enabled
 sed -i 's/permissive/enforcing/g' /etc/selinux/config
-setenforce 1
 
-# restart server so that sysctl/limits changes can be effected.
+# Tell SELinux to correct the file contexts
+touch /.autorelabel
+
+# restart server so that sysctl/limits changes can be effected and SELinux can be turned on and relabel file contexts as required.
 reboot
 ```
 
 ## Testing 
 * From an Internet connected host
-  * dig @<public_ip> wiki.dnsdemo.osite.co.za
-  * dig @<public_ip> ns1.dnsdemo.osite.co.za
+  * dig @<your_public_ip> wiki.dnsdemo.osite.co.za
+  * dig @<your_public_ip> ns1.dnsdemo.osite.co.za
 
 ## Next Steps 
 ### Create CFN Template with
