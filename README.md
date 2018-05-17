@@ -7,6 +7,8 @@ UserData script for Centos 7 Chroot Bind DNS Server
 * Firewalld running on instance
 * Single forward only zone example 
 
+**NB!!! THIS IS WORK IN PROGRESS AND BY NO MEANS EXHAUSTIVE**
+
 ## Using this:
 * Launch Above AMI in eu-west Region
 * Launch into a Public Subnet
@@ -149,12 +151,12 @@ reboot
   * Allow SSH from CIDR provided
 
 ### Add DNSSEC zone signing
-DNSSEC is not currently supported by all TLD and Registrars, notably for co.za.
-Being ready for when it is is not a bad thing.
+~~DNSSEC is not currently supported by all TLD and Registrars, notably for co.za.~~ This was added late 2017.
+~~Being ready for when it is is not a bad thing.~~
 * setup Key Signing Keys and Zone Signing Key
 * add both Keys to bottom of zonefile($INCLUDE <Keynamehere>)
 * sign zonefiles with Zone Signing Key
-* configure DS Records with registrar
+* configure DS Records with registrar (osite.co.za) in this case. Which itself will need to be signed up to the TLD.
 * Test with:
   * dig +dnssec @8.8.8.8 some.domain.com
   eg:
@@ -260,7 +262,12 @@ EOF
 * Enable host monitoring
 
 ## References:
-
-* https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/sec-security_threats
-* https://www.cyberciti.biz/tips/linux-security.html
+### DNSSEC
+* https://www.registry.net.za/content.php?gen=1&contentid=57&title=.ZA+Position+Statement+on+DNSSEC
+* https://dnssec.co.za/
+* https://nkosi.co.za/co-za-dnssec-how-to/
 * https://www.digitalocean.com/community/tutorials/how-to-setup-dnssec-on-an-authoritative-bind-dns-server--2
+### SELinux
+* https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/sec-security_threats
+### Host Hardening
+* https://www.cyberciti.biz/tips/linux-security.html
