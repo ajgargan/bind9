@@ -165,11 +165,6 @@ net.ipv4.conf.default.accept_redirects=0
 #Enable Bad Error Message Protection
 net.ipv4.icmp_ignore_bogus_error_responses=1
 
-# Harden limits around core dumps
-cat <<EOF >/etc/limits.d/99_core_hardening.conf
-*    hard   core    0
-EOF
-
 #Restricting Core Dumps
 fs.suid_dumpable=0
 #Enable Exec Shield
@@ -177,6 +172,12 @@ kernel.exec-shield=1
 #Enable randomized Virtual Memory Region Placement
 kernel.randomize_va_space=2
 EOF
+
+# Harden limits around core dumps
+cat <<EOF >/etc/limits.d/99_core_hardening.conf
+*    hard   core    0
+EOF
+
 
 # Ensure that SELinux is enabled
 sed -i 's/permissive/enforcing/g' /etc/selinux/config
