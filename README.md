@@ -14,7 +14,7 @@ UserData script for Centos 7 Chroot Bind DNS Server
 * Launch into a Public Subnet
 * Enable UDP and TCP 53(DNS) in the Security group and TCP 22(SSH) 
 * Configure host with an SSH Keypair you have access to.
-* Paste the UserData below into the instance UserData under advanced
+* Paste the UserData below into the instance UserData under "Advanced" (Substitute your own domain)
 
 ## Single Host UserData script
 ```bash
