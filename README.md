@@ -276,7 +276,7 @@ EOF
   * echo > /etc/securetty
   * usermod -s /sbin/login root
 
-* Possibly look at fail2ban etc. and also TCP Connection rate limiting via Firewalld/IPTABLES but realistically SSH **shouldn't** be accessible directly from outside the network.
+* Possibly look at fail2ban etc. and also TCP Connection rate limiting via Firewalld/IPTABLES but realistically SSH **shouldn't** be accessible directly from outside the network. http://www.win.tue.nl/~vincenth/ssh_rate_limit_firewalld.htm
 
 * Enable Auditing 
 * Enable remote syslogging
