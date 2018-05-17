@@ -135,6 +135,11 @@ net.ipv4.conf.default.accept_redirects=0
 #Enable Bad Error Message Protection
 net.ipv4.icmp_ignore_bogus_error_responses=1
 
+# Harden limits around core dumps
+cat <<EOF >/etc/limits.d/99_core_hardening.conf
+*    hard   core    0
+EOF
+
 #Restricting Core Dumps
 fs.suid_dumpable=0
 #Enable Exec Shield
@@ -147,7 +152,7 @@ EOF
 sed -i 's/permissive/enforcing/g' /etc/selinux/config
 setenforce 1
 
-# restart server
+# restart server so that sysctl/limits changes can be effected.
 reboot
 ```
 
@@ -232,6 +237,12 @@ reboot
 * Limits Tuning
   * Restrict Core Dumps
     * Add "*    hard   core    0" to /etc/limits.d/99_core_hardening.conf
+```
+cat <<EOF >/etc/limits.d/99_core_hardening.conf
+*    hard   core    0
+EOF
+```
+    
 ```
 cat <<EOF >/etc/sysctl.d/hardening.conf
 #Disable the IP Forwarding
