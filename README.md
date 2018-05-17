@@ -178,6 +178,33 @@ cat <<EOF >/etc/limits.d/99_core_hardening.conf
 *    hard   core    0
 EOF
 
+# backup sshd config
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.orginal
+
+# Function to be able to set SSHD params
+function set_sshd_param() 
+{ 
+   grep -v $1 /etc/ssh/sshd_config > /etc/ssh/sshd_config.tmp
+   echo "$1 $2" >> /etc/ssh/sshd_config.tmp 
+   
+   # Only change the actual config if we don't break it.
+   /usr/sbin/sshd -t
+   if [ $? -eq 0 ]
+   then
+       mv /etc/ssh/sshd_config.tmp /etc/ssh/sshd_config
+   fi
+}
+
+set_sshd_param Protocol 2
+set_sshd_param PubkeyAuthentication yes
+set_sshd_param PasswordAuthentication no
+set_sshd_param PermitRootLogin no
+set_sshd_param UsePAM yes
+set_sshd_param Port 99
+
+# restart sshd the function above already tests for a broken config
+# we will reboot and then sshd will come up with new config anyway
+# systemctl sshd restart
 
 # Ensure that SELinux is enabled
 sed -i 's/permissive/enforcing/g' /etc/selinux/config
@@ -247,19 +274,6 @@ reboot
   * [versignlabs dnssec tool](https://dnssec-analyzer.verisignlabs.com/)
 
 ### User data
-
-* Lock down /etc/ssh/sshd_config
-  * Force V2
-    - Protocol 2
-  * No Remote Root
-    - PermitRootLogin No
-  * PublicKey authentication Only
-    - PubkeyAuthentication yes
-    - PasswordAuthentication no
-  * Force Use of PAM
-    - UsePAM yes
-  * Alternative SSH Port (Remember to modify SG's)
-    - Port 99
 
 * Use an isolated block device for the chroot
   * Set the following fsoptions
