@@ -10,7 +10,7 @@ UserData script for Centos 7 Chroot Bind DNS Server
 **NB!!! THIS IS WORK IN PROGRESS AND BY NO MEANS EXHAUSTIVE**
 
 ## Using this:
-* Launch Above AMI in eu-west Region
+* Launch dcos-centos7-201710261514(ami-0075d079) in eu-west Region
 * Launch into a Public Subnet
 * Enable UDP and TCP 53(DNS) in the Security group and TCP 22(SSH) 
 * Configure host with an SSH Keypair you have access to.
