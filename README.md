@@ -14,12 +14,16 @@ UserData script for Centos 7 Chroot Bind DNS Server
 * Launch into a Public Subnet
 * Enable UDP and TCP 53(DNS) in the Security group and TCP 22(SSH) 
 * Configure host with an SSH Keypair you have access to.
-* Paste the UserData below into the instance UserData under "Advanced" (Substitute your own domain)
+* Paste the UserData below into the instance UserData under "Advanced" (Substitute your own MYDOMAIN and MYSSHPORT)
 
 ## Single Host UserData script
 ```bash
 #!/bin/sh -x
 # -x so we can see whats going on from the console output and logs
+
+# Set your VARS here
+MYDOMAIN=dnsdemo.osite.co.za
+MYSSHPORT=22
 
 # Ensure SELinux is off so we can install and configure things
 # We will enable it when we are done
@@ -29,7 +33,7 @@ setenforce 0
 yum update -y
 
 # Set my hostname
-hostnamectl set-hostname ns1.dnsdemo.osite.co.za
+hostnamectl set-hostname ns1.${MYDOMAIN}
 
 # install the chrooted bind package
 yum install -y bind-chroot firewalld 
@@ -80,9 +84,9 @@ zone "." IN {
         file "named.ca";
 };
 
-zone "dnsdemo.osite.co.za" {
+zone "${MYDOMAIN}" {
     type master;
-    file "dnsdemo.osite.co.za.signed";
+    file "${MYDOMAIN}.signed";
     allow-update{none;};
 };
 
@@ -90,23 +94,23 @@ include "/etc/named.rfc1912.zones";
 include "/etc/named.root.key";
 EOF
 
-cat <<EOF >/var/named/dnsdemo.osite.co.za
+cat <<EOF >/var/named/${MYDOMAIN}
 \$ORIGIN dnsdemo.osite.co.za.
 \$TTL 60
-@   IN  SOA ns1.dnsdemo.osite.co.za.    root.dnsdemo.osite.co.za. (
+@   IN  SOA ns1.${MYDOMAIN}.    root.${MYDOMAIN}. (
                 2017051004 ; se = serial number
                 60         ; ref = refresh
                 60         ; ret = update retry
                 60         ; ex = expiry
                 60 )       ; min = minimum
 
-@           IN      NS      ns1.dnsdemo.osite.co.za.
+@           IN      NS      ns1.${MYDOMAIN}.
 ns1         IN      A       192.168.0.33
 wiki        IN      CNAME   wiki.osite.co.za.
 EOF
 
-chown root.named /var/named/dnsdemo.osite.co.za
-chmod 640 /var/named/dnsdemo.osite.co.za
+chown root.named /var/named/${MYDOMAIN}
+chmod 640 /var/named/${MYDOMAIN}
 
 # Install package to make better entropy for cloud server entropy
 yum install -y epel-release 
@@ -115,30 +119,30 @@ yum install haveged
 cd /var/named/
 # create DNSSEC signing keys
 # Key Signing Key
-dnssec-keygen -a NSEC3RSASHA1 -b 2048 -n ZONE dnsdemo.osite.co.za
+dnssec-keygen -a NSEC3RSASHA1 -b 2048 -n ZONE ${MYDOMAIN}
 # Zone Signing Key
-dnssec-keygen -f KSK -a NSEC3RSASHA1 -b 4096 -n ZONE dnsdemo.osite.co.za
+dnssec-keygen -f KSK -a NSEC3RSASHA1 -b 4096 -n ZONE ${MYDOMAIN}
 
 # Ensure private key perms
-chown root:root /var/named/Kdnsdemo.osite.co.za.*private
-chmod 600 /var/named/Kdnsdemo.osite.co.za.*private
+chown root:root /var/named/K${MYDOMAIN}.*private
+chmod 600 /var/named/K${MYDOMAIN}.*private
 
 # Find key file names to add to zone
-KEY1=$(basename $(ls /var/named/Kdnsdemo.osite.co.za.*key | head -n1))
-KEY1=$(basename $(ls /var/named/Kdnsdemo.osite.co.za.*key | tail -n1))
+KEY1=$(basename $(ls /var/named/K${MYDOMAIN}.*key | head -n1))
+KEY1=$(basename $(ls /var/named/K${MYDOMAIN}.*key | tail -n1))
 
 # Add keys to zone file
-cat <<EOF >>/var/named/dnsdemo.osite.co.za
+cat <<EOF >>/var/named/${MYDOMAIN}
 \$INCLUDE $KEY1
 \$INCLUDE $KEY2
 EOF
 
 # sign zone (creates /var/named/dnsdemo.osite.co.za.signed)
-dnssec-signzone -A -3 $(head -c 1000 /dev/random | sha1sum | cut -b 1-16) -N INCREMENT -o dnsdemo.osite.co.za -t dnsdemo.osite.co.za
+dnssec-signzone -A -3 $(head -c 1000 /dev/random | sha1sum | cut -b 1-16) -N INCREMENT -o ${MYDOMAIN} -t ${MYDOMAIN}
 
 # Set SELinux Contexts (not reallly required see autorelabel near the end)
 # semanage fcontext -a -t named_zone_t /etc/named.conf
-# semanage fcontext -a -t named_zone_t /var/named/dnsdemo.osite.co.za
+# semanage fcontext -a -t named_zone_t /var/named/${MYDOMAIN}
 
 # setup the named-chroot. The above configs will be merged into the chroot
 /usr/lib/exec/setup-named-chroot.sh /var/named/chroot on
@@ -147,7 +151,8 @@ dnssec-signzone -A -3 $(head -c 1000 /dev/random | sha1sum | cut -b 1-16) -N INC
 systemctl enable named-chroot
 systemctl start named-chroot
 
-cat /var/named/dsset-dnsdemo.osite.co.za.
+# So we can get the DS RECORDS for our Registrar
+cat /var/named/dsset-${MYDOMAIN}.
 
 # Set firewalling to allow DNS access
 systemctl enable firewalld 
@@ -203,7 +208,7 @@ set_sshd_param PubkeyAuthentication yes
 set_sshd_param PasswordAuthentication no
 set_sshd_param PermitRootLogin no
 set_sshd_param UsePAM yes
-set_sshd_param Port 99
+set_sshd_param Port $MYSSHPORT
 
 # restart sshd the function above already tests for a broken config
 # we will reboot and then sshd will come up with new config anyway
