@@ -273,7 +273,7 @@ reboot
   ```
   * [versignlabs dnssec tool](https://dnssec-analyzer.verisignlabs.com/)
 
-### User data
+### UserData script
 
 * Use an isolated block device for the chroot
   * Set the following fsoptions
