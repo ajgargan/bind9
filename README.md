@@ -10,7 +10,7 @@ UserData script for Centos 7 Chroot Bind DNS Server
 **NB!!! THIS IS WORK IN PROGRESS AND BY NO MEANS EXHAUSTIVE**
 
 ## Using this:
-* Launch dcos-centos7-201710261514(ami-0075d079) in eu-west region
+* Launch dcos-centos7-201710261514(ami-0075d079) in eu-west region . (This was chosen because of dcos(Data Center OS))
 * Launch into a Public Subnet
 * Enable UDP and TCP 53(DNS) in the Security group and TCP 22(SSH) 
 * Configure host with an SSH Keypair you have access to.
@@ -24,6 +24,9 @@ UserData script for Centos 7 Chroot Bind DNS Server
 # Ensure SELinux is off so we can install and configure things
 # We will enable it when we are done
 setenforce 0
+
+# Update all packages
+yum update -y
 
 # Set my hostname
 hostnamectl set-hostname ns1.dnsdemo.osite.co.za
@@ -132,7 +135,7 @@ EOF
 # sign zone (creates /var/named/dnsdemo.osite.co.za.signed)
 dnssec-signzone -A -3 $(head -c 1000 /dev/random | sha1sum | cut -b 1-16) -N INCREMENT -o dnsdemo.osite.co.za -t dnsdemo.osite.co.za
 
-# Set SELinux Contexts (not reallly required
+# Set SELinux Contexts (not reallly required see autorelabel near the end)
 # semanage fcontext -a -t named_zone_t /etc/named.conf
 # semanage fcontext -a -t named_zone_t /var/named/dnsdemo.osite.co.za
 
