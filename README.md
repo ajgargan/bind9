@@ -112,6 +112,7 @@ chmod 640 /var/named/dnsdemo.osite.co.za
 yum install -y epel-release 
 yum install haveged
 
+cd /var/named/
 # create DNSSEC signing keys
 # Key Signing Key
 dnssec-keygen -a NSEC3RSASHA1 -b 2048 -n ZONE dnsdemo.osite.co.za
@@ -145,6 +146,8 @@ dnssec-signzone -A -3 $(head -c 1000 /dev/random | sha1sum | cut -b 1-16) -N INC
 # turn on and persist the named-chroot service
 systemctl enable named-chroot
 systemctl start named-chroot
+
+cat /var/named/dsset-dnsdemo.osite.co.za.
 
 # Set firewalling to allow DNS access
 systemctl enable firewalld 
@@ -218,8 +221,9 @@ reboot
 
 ## Testing 
 * From an Internet connected host
-  * dig @<your_public_ip> wiki.dnsdemo.osite.co.za
-  * dig @<your_public_ip> ns1.dnsdemo.osite.co.za
+  * dig @<your_public_ip> wiki.dnsdemo.osite.co.za +dnssec
+  * dig @<your_public_ip> ns1.dnsdemo.osite.co.za +dnssec
+  * dig dig DNSKEY dnsdemo.osite.co.za. @<your_public_ip> +multiline 
 
 ## Next Steps 
 ### Create CFN Template with
