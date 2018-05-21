@@ -129,7 +129,7 @@ chmod 600 /var/named/K${MYDOMAIN}.*private
 
 # Find key file names to add to zone
 KEY1=$(basename $(ls /var/named/K${MYDOMAIN}.*key | head -n1))
-KEY1=$(basename $(ls /var/named/K${MYDOMAIN}.*key | tail -n1))
+KEY2=$(basename $(ls /var/named/K${MYDOMAIN}.*key | tail -n1))
 
 # Add keys to zone file
 cat <<EOF >>/var/named/${MYDOMAIN}
