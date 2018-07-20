@@ -196,7 +196,7 @@ function set_sshd_param()
    echo "$1 $2" >> /etc/ssh/sshd_config.tmp 
    
    # Only change the actual config if we don't break it.
-   /usr/sbin/sshd -t
+   /usr/sbin/sshd -t -f /etc/ssh/sshd_config.tmp
    if [ $? -eq 0 ]
    then
        mv /etc/ssh/sshd_config.tmp /etc/ssh/sshd_config
